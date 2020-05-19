@@ -21,20 +21,31 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // const ref = firebase.database().ref("user");
-    // console.log(ref);
-
-    // ref.on("value", (snapshot) => {
-    //   let FBUser = snapshot.val();
-    //   this.setState({ user: FBUser });
-    // });
-
     firebase.auth().onAuthStateChanged((FBUser) => {
       if (FBUser) {
         this.setState({
           user: FBUser,
           displayName: FBUser.displayName,
           userID: FBUser.uid,
+        });
+
+        const meetingsRef = firebase.database().ref("meetings/" + FBUser.uid);
+
+        meetingsRef.on("value", (snapshot) => {
+          let meetings = snapshot.val();
+          let meetingsList = [];
+
+          for (let item in meetings) {
+            meetingsList.push({
+              meetingID: item,
+              meetingName: meetings[item].meetingName,
+            });
+          }
+
+          this.setState({
+            meetings: meetingsList,
+            howManyMeetings: meetingsList.length,
+          });
         });
       }
     });
