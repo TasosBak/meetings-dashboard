@@ -94,7 +94,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Navigation user={this.state.user} logOutUser={this.logOutUser} />
+        <Navigation user={this.state.user} logoutUser={this.logOutUser} />
         {this.state.user && (
           <Welcome
             userName={this.state.displayName}
