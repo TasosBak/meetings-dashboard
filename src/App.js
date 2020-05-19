@@ -10,6 +10,7 @@ import Login from "./Login";
 import Register from "./Register";
 import Meetings from "./Meetings";
 import CheckIn from "./CheckIn";
+import Attendees from "./Attendees";
 
 class App extends Component {
   constructor() {
@@ -48,6 +49,8 @@ class App extends Component {
             howManyMeetings: meetingsList.length,
           });
         });
+      } else {
+        this.setState({ user: null });
       }
     });
   }
@@ -67,12 +70,12 @@ class App extends Component {
     });
   };
 
-  logoutUser = (e) => {
+  logOutUser = (e) => {
     e.preventDefault();
     this.setState({
-      user: null,
       displayName: null,
       userID: null,
+      user: null,
     });
 
     firebase
@@ -91,8 +94,13 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Navigation user={this.state.user} logoutUser={this.logoutUser} />
-        {this.state.user && <Welcome userName={this.state.displayName} />}
+        <Navigation user={this.state.user} logOutUser={this.logOutUser} />
+        {this.state.user && (
+          <Welcome
+            userName={this.state.displayName}
+            logOutUser={this.logOutUser}
+          />
+        )}
 
         <Router>
           <Home path="/" user={this.state.user} />
@@ -102,6 +110,10 @@ class App extends Component {
             meetings={this.state.meetings}
             addMeeting={this.addMeeting}
             userID={this.state.userID}
+          />
+          <Attendees
+            path="/attendees/:userID/:meetingID"
+            adminUser={this.state.userID}
           />
           <CheckIn path="/checkin/:userID/:meetingID" />
           <Register path="/register" registerUser={this.registerUser} />
