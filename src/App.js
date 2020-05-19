@@ -21,12 +21,22 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const ref = firebase.database().ref("user");
-    console.log(ref);
+    // const ref = firebase.database().ref("user");
+    // console.log(ref);
 
-    ref.on("value", (snapshot) => {
-      let FBUser = snapshot.val();
-      this.setState({ user: FBUser });
+    // ref.on("value", (snapshot) => {
+    //   let FBUser = snapshot.val();
+    //   this.setState({ user: FBUser });
+    // });
+
+    firebase.auth().onAuthStateChanged((FBUser) => {
+      if (FBUser) {
+        this.setState({
+          user: FBUser,
+          displayName: FBUser.displayName,
+          userID: FBUser.uid,
+        });
+      }
     });
   }
 
@@ -49,7 +59,7 @@ class App extends Component {
     return (
       <div>
         <Navigation user={this.state.user} />
-        {this.state.user && <Welcome user={this.state.displayName} />}
+        {this.state.user && <Welcome userName={this.state.displayName} />}
 
         <Router>
           <Home path="/" user={this.state.user} />
