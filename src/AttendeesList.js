@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { GoTrashcan } from "react-icons/go";
+import { GoTrashcan, GoStar } from "react-icons/go";
 import firebase from "./Firebase";
 
 class AttendeesList extends Component {
@@ -16,6 +16,23 @@ class AttendeesList extends Component {
       .ref(`meetings/${adminUser}/${whichMeeting}/attendees/${whichAttendee}`);
     ref.remove();
   };
+
+  toggleStar = (e, star, whichMeeting, whichAttendee) => {
+    e.preventDefault();
+    const adminUser = this.props.adminUser;
+    const ref = firebase
+      .database()
+      .ref(
+        `meetings/${adminUser}/${whichMeeting}/attendees/${whichAttendee}/star`
+      );
+
+    if (star === undefined) {
+      ref.set(true);
+    } else {
+      ref.set(!star);
+    }
+  };
+
   render() {
     const admin = this.props.adminUser === this.props.userID ? true : false;
     const attendees = this.props.attendees;
@@ -36,7 +53,7 @@ class AttendeesList extends Component {
                 <div className="btn-group pr-2">
                   <button
                     className="btn btn-sm btn-outline-secondary"
-                    tite="Delete Attendee"
+                    title="Delete Attendee"
                     onClick={(e) =>
                       this.deleteAttendee(
                         e,
@@ -46,6 +63,23 @@ class AttendeesList extends Component {
                     }
                   >
                     <GoTrashcan />
+                  </button>
+                  <button
+                    className={
+                      "btn btn-sm " +
+                      (item.star ? "btn-info" : "btn-outline-secondary")
+                    }
+                    tite="Give user a star"
+                    onClick={(e) =>
+                      this.toggleStar(
+                        e,
+                        item.star,
+                        this.props.meetingID,
+                        item.attendeeID
+                      )
+                    }
+                  >
+                    <GoStar />
                   </button>
                 </div>
               )}
